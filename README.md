@@ -13,6 +13,104 @@ Yudhistira akan digunakan sebagai DNS Master, Werkudara sebagai DNS Slave, Arjun
 
 ![image](https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/e722348c-5742-40b3-808f-4f2858742ffc)
 
+1. Atur konfigurasi untuk masing masing node 
+
+* Router Pandudewanata
+```
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 10.3.1.1
+	netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+	address 10.3.2.1
+	netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+	address 10.3.3.1
+	netmask 255.255.255.0
+```
+
+* Yudhistira DNS Master
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.2.2
+	netmask 255.255.255.0
+	gateway 10.3.2.1
+```
+
+* Sadewa Client
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.1.2
+	netmask 255.255.255.0
+	gateway 10.3.1.1
+```
+
+* Nakula Client
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.1.3
+	netmask 255.255.255.0
+	gateway 10.3.1.1
+```
+
+* Werkudara DNS Slave
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.3.2
+	netmask 255.255.255.0
+	gateway 10.3.3.1
+```
+
+* Arjuna Load Balancer
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.3.3
+	netmask 255.255.255.0
+	gateway 10.3.3.1
+```
+
+* Abimanyu Web Server
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.3.4
+	netmask 255.255.255.0
+	gateway 10.3.3.1
+```
+
+* Prabakusuma Web Server
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.3.5
+	netmask 255.255.255.0
+	gateway 10.3.3.1
+```
+
+* Wisanggeni Web Server
+```
+auto eth0
+iface eth0 inet static
+	address 10.3.3.6
+	netmask 255.255.255.0
+	gateway 10.3.3.1
+```
+
+2. Ketikkan `iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.3.0.0/16` pada router Pandudewanata. Setelah itu ketikkan command `cat /etc/resolv.conf`
+
+3. Masukkan command `echo nameserver 192.168.122.1 > /etc/resolv.conf`pada semua node yang ada dan coba `PING google.com` untuk memastikan bahwa semua node sudah tersambung.
 
 
 ## Soal 2
