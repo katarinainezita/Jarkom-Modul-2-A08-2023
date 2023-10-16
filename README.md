@@ -162,10 +162,66 @@ echo 'nameserver 10.3.2.2' > /etc/resolv.conf
 
 ping arjuna.a08.com -c 5
 ```
-
+<img width="331" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/fc2abafc-37b4-41be-9e44-bc0bf1a9bd8c">
 
 ## Soal 3
 Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
+
+Untuk menjadikan abimanyu sebagai website utama, kita perlu mengetikkan command di bawah ini pada Yudhistira DNS Master dan menyimpannya dalam sebuah file bernama `no3.sh`
+
+* Untuk membuat sebuah domain, masukkan konfigurasi dibawah ini
+```
+echo 'zone "abimanyu.a08.com" {
+	type master;
+	file "/etc/bind/jarkom/abimanyu.a08.com";
+};' > /etc/bind/named.conf.local
+```
+
+* Buat sebuah folder
+```
+mkdir /etc/bind/jarkom
+```
+
+* Copy dile `db.local` ke dalam file yang baru saja dibuat dengan syntax seperti di bawah ini
+```
+cp /etc/bind/db.local /etc/bind/jarkom/abimanyu.a08.com
+```
+
+* Buka file abimanyu.a08.com dan edit seperti gambar di bawah ini
+```
+nano /etc/bind/jarkom/abimanyu.a08.com
+```
+```
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.a08.com. root.abimanyu.a08.com. (
+		     2023101001         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      abimanyu.a08.com.
+@       IN      A       10.3.2.2      
+www     IN      CNAME   abimanyu.a08.com. 
+@       IN      AAAA    ::1' > /etc/bind/jarkom/abimanyu.a08.com
+```
+
+* Restart bind9 sesuai syntax di bawah
+```
+service bind9 restart
+```
+
+* Lakukan pengetesan pada node client lain (Nakula atau Sadewa). Disini kita menggunakan Nakula sebagai percobaan.
+
+```
+echo 'nameserver 10.3.2.2' > /etc/resolv.conf
+
+ping abimanyu.a08.com -c 5
+```
+<img width="331" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/fc2abafc-37b4-41be-9e44-bc0bf1a9bd8c">
 
 ## Soal 4
 Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
