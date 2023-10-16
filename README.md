@@ -340,6 +340,17 @@ service bind9 restart
 service bind9 stop
 ```
 
+<img width="535" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/a42c4144-3641-441f-b018-0e90472be8f9">
+
+* Lakukan pengetesan pada node client lain (Nakula atau Sadewa). Disini kita menggunakan Nakula sebagai percobaan.
+
+```
+echo 'nameserver 10.3.2.2
+nameserver 10.3.3.2' > /etc/resolv.conf
+
+ping abimanyu.a08.com -c 5
+```
+
 
 ## Soal 7
 Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
