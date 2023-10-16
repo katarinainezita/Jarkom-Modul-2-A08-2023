@@ -523,6 +523,8 @@ ping baratayuda.abimanyu.a08.com -c 3
 ping www.baratayuda.abimanyu.a08.com -c 3
 ```
 
+<img width="396" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/922e397c-1451-4059-af3f-c26732ffccaf">
+
 ## Soal 8
 Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
 
