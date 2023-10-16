@@ -117,6 +117,39 @@ iface eth0 inet static
 ## Soal 2
 Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
 
+1. Untuk menjadikan arjuna sebagai website utama, kita perlu mengetikkan command di bawah ini pada Yudhistira DNS Master dan menyimpannya dalam sebuah file bernama `no2.sh`
+
+* Lakukan instalasi bind terlebih dahulu
+```
+apt-get update
+apt-get install bind9 -y
+```
+
+* Untuk membuat sebuah domain, masukkan konfigurasi dibawah ini
+```
+echo 'zone "arjuna.a08.com" {
+	type master;
+	file "/etc/bind/jarkom/arjuna.a08.com";
+};' > /etc/bind/named.conf.local
+```
+
+* Buat sebuah folder
+```
+mkdir /etc/bind/jarkom
+```
+
+* Copy dile `db.local` ke dalam file yang baru saja dibuat dengan syntax seperti di bawah ini
+```
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.a08.com
+```
+
+* Buka file arjuna.a08.com dan edit seperti gambar di bawah ini
+```
+nano /etc/bind/jarkom/arjuna.a08.com
+```
+
+
+
 ## Soal 3
 Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
 
