@@ -221,7 +221,8 @@ echo 'nameserver 10.3.2.2' > /etc/resolv.conf
 
 ping abimanyu.a08.com -c 5
 ```
-<img width="331" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/fc2abafc-37b4-41be-9e44-bc0bf1a9bd8c">
+
+<img width="319" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/d1039ce3-7707-42e8-a14a-26104c25f7f3">
 
 ## Soal 4
 Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
