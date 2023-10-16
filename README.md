@@ -327,9 +327,19 @@ apt-get install bind9 -y
 ```
 
 * Tambahkan syntax seperti dibawah ini pada file `/etc/bind/named.conf.local`
+
+<img width="238" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/8334084c-8119-4a48-9b5f-e81e9ba9c3b7">
+
+* Restart bind9 sesuai syntax di bawah
+```
+service bind9 restart
 ```
 
+* Lakukan testing pada Yudhistira
 ```
+service bind9 stop
+```
+
 
 ## Soal 7
 Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
