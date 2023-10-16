@@ -117,7 +117,7 @@ iface eth0 inet static
 ## Soal 2
 Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
 
-1. Untuk menjadikan arjuna sebagai website utama, kita perlu mengetikkan command di bawah ini pada Yudhistira DNS Master dan menyimpannya dalam sebuah file bernama `no2.sh`
+Untuk menjadikan arjuna sebagai website utama, kita perlu mengetikkan command di bawah ini pada Yudhistira DNS Master dan menyimpannya dalam sebuah file bernama `no2.sh`
 
 * Lakukan instalasi bind terlebih dahulu
 ```
@@ -148,6 +148,20 @@ cp /etc/bind/db.local /etc/bind/jarkom/arjuna.a08.com
 nano /etc/bind/jarkom/arjuna.a08.com
 ```
 
+<img width="325" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/4c38ca91-06db-433c-ba57-e33fea4e439a">
+
+* Restart bind9 sesuai syntax di bawah
+```
+service bind9 restart
+```
+
+* Lakukan pengetesan pada node client lain (Nakula atau Sadewa). Disini kita menggunakan Nakula sebagai percobaan.
+
+```
+echo 'nameserver 10.3.2.2' > /etc/resolv.conf
+
+ping arjuna.a08.com -c 5
+```
 
 
 ## Soal 3
