@@ -307,6 +307,13 @@ host -t PTR 10.3.2.2
 ## Soal 6
 Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
 
+Untuk membuat Werkudara sebagai DNS Slave, perlu melakukan konfigurasi pada file `/etc/bind/named.conf.local` yang nantinya akan di simpan pada file `no6.sh` pada yudhistira
+
+* Masukkan syntax
+```
+#!/bin/bash
+```
+
 ## Soal 7
 Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
 
