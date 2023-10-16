@@ -309,9 +309,26 @@ Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga We
 
 Untuk membuat Werkudara sebagai DNS Slave, perlu melakukan konfigurasi pada file `/etc/bind/named.conf.local` yang nantinya akan di simpan pada file `no6.sh` pada yudhistira
 
-* Masukkan syntax
+* Masukkan syntax seperti gambar dibawah ini
+
+<img width="264" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/47c446ff-8058-4c3b-abe2-dbbc973601ea">
+
+* Restart bind9 sesuai syntax di bawah
 ```
-#!/bin/bash
+service bind9 restart
+```
+
+Pada Werkudara DNS Slave, ketikkan beberapa command dibawah dan simpan didalam file `no6.sh`
+
+* Lakukan konfigurasi seperti dibawah ini
+```
+apt-get update
+apt-get install bind9 -y
+```
+
+* Tambahkan syntax seperti dibawah ini pada file `/etc/bind/named.conf.local`
+```
+
 ```
 
 ## Soal 7
