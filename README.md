@@ -249,6 +249,61 @@ ping parikesit.abimanyu.a08.com -c 5
 ## Soal 5
 Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 
+Untuk melakukan reverse domain, perlu mengedit file `/etc/bind/named.conf.local` pada Yudhistira dan menyimpannya pada file `no5.sh`
+
+* Masukkan konfigurasi seperti dibawah ini
+
+```
+echo 'zone "2.3.10.in-addr.arpa" {
+	type master;
+	file "/etc/bind/jarkom/2.3.10.in-addr.arpa";
+};' > /etc/bind/named.conf.local
+```
+
+* Copykan file db.local
+```
+cp /etc/bind/db.local /etc/bind/jarkom/2.3.10.in-addr.arpa
+```
+
+* Edit file `/etc/bind/jarkom/2.3.10.in-addr.arpa` seperti dibawah ini
+```
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.a08.com. root.abimanyu.a08.com. (
+		     2023101001         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+2.3.10.in-addr.arpa.	IN	NS      abimanyu.a08.com.
+2 			IN 	PTR 	abimanyu.a08.com. ' > /etc/bind/jarkom/2.3.10.in-addr.arpa
+```
+* Restart bind9 sesuai syntax di bawah
+```
+service bind9 restart
+```
+
+* Lakukan pengetesan pada node client lain (Nakula atau Sadewa). Disini kita menggunakan Nakula sebagai percobaan.
+
+```
+echo 'nameserver 10.3.2.2
+nameserver 192.168.122.1
+' > /etc/resolv.conf
+
+apt-get update
+apt-get install dnsutils
+```
+
+* Kemudian ketikkan
+```
+host -t PTR 10.3.2.2
+```
+
+<img width="328" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/d34f4941-2ac8-40dc-9409-e14b1fd55e23">
+
 ## Soal 6
 Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
 
