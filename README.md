@@ -607,6 +607,223 @@ service bind9 restart
 ## Soal 9
 Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
 
+* Pada Arjuna Load Balancer, tulisan syntax ini pada file `arjuna_nginx.sh`
+```
+apt-get update
+apt-get install bind9 nginx
+```
+
+```
+echo '
+zone "jarkom.site" {
+	type master;	
+	file "/etc/bind/jarkom/jarkom.site";
+};
+
+zone "2.168.192.in-addr.arpa" {
+	type master;
+	file "/etc/bind/jarkom/2.168.192.in-addr.arpa";
+};'
+```
+
+* Pada Arjuna, buat file bernama `no9.sh` dan ketikkan syntax dibawah ini
+
+```
+apt-get update
+apt-get install bind9 nginx
+touch /etc/nginx/sites-available/lb-jarkom
+
+echo '
+upstream myweb {
+	server 10.3.3.5:8001;
+	server 10.3.3.4:8002;
+	server 10.3.3.6:8006;
+}
+
+server {
+	lister 80;
+	server_name arjuna.a08.com www.arjuna.a08.com;
+
+	location / {
+	proxy_pass http://myweb;
+	}
+}' > /etc/nginx/sites-available/lb-jarkom
+
+ln -s /etc/nginx/sites-available/lb-jarkom /etc/nginx/sites-enabled
+rm -rf /etc/nginx/sites-enabled/default
+
+service nginx restart
+```
+
+* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no9.sh`
+
+```
+apt-get update && apt-get install nginx php php-fpm -y
+mkdir /var/www/jarkom
+touch /var/www/jarkom/index.php
+
+echo '<?php
+$hostname = gethostname();
+$date = date("Y-m-d H:i:s");
+$php_version = phpversion();
+$username = get_current_user();
+
+echo "Hello World! <br>";
+echo "Saya adalah: $username<br>";
+echo "Saat ini berada di : $hostname<br>";
+?>' > /var/www/jarkom/index.php
+
+touch /etc/nginx/sites-available/jarkom
+
+echo 'server {
+	listen 8002;
+
+	root /var/www/jarkom;
+
+	index index.php index.html index.htm;
+	sever_name _;
+
+	location / {
+			try_files $uri $uri/ /index.php?$query_string;
+	}
+
+	# pass PHP scripts to FastCGI server
+	location ~ \.php$ {
+	include snippets/fastcgi-php.conf;
+	fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+	}
+
+location ~ /\.ht {
+			deny all;
+	}
+
+	error_log /var/log/nginx/jarkom_error.log
+	access_log /var/log/nginx/jarkom_access.log
+}' > /etc/nginx/sites-available/jarkom
+
+ln -s /etc/nginx/sites-available/jarkom /etc/nginx/sites-enabled
+rm -rf /etc/nginx/sites-enabled/default
+
+service php7.0-fpm start
+service php7.0-fpm restart
+service nginx restart
+nginx -t
+```
+
+* Pada Prabukusuma Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no9.sh`
+
+```
+apt-get update && apt-get install nginx php php-fpm -y
+mkdir /var/www/jarkom
+touch /var/www/jarkom/index.php
+
+echo '<?php
+$hostname = gethostname();
+$date = date("Y-m-d H:i:s");
+$php_version = phpversion();
+$username = get_current_user();
+
+echo "Hello World! <br>";
+echo "Saya adalah: $username<br>";
+echo "Saat ini berada di: $hostname<br>";
+echo "Versi PHP yang saya gunakan: $php_version<br>";
+echo "Tanggal saat ini: $date<br>";
+?>' > /var/www/jarkom/index.php
+
+touch /etc/nginx/sites-available/jarkom
+
+echo 'server {
+	listen 8001;
+
+	root /var/www/jarkom;
+
+	index index.php index.html index.htm;
+	sever_name _;
+
+	location / {
+			try_files $uri $uri/ /index.php?$query_string;
+	}
+
+	# pass PHP scripts to FastCGI server
+	location ~ \.php$ {
+	include snippets/fastcgi-php.conf;
+	fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+	}
+
+location ~ /\.ht {
+			deny all;
+	}
+
+	error_log /var/log/nginx/jarkom_error.log
+	access_log /var/log/nginx/jarkom_access.log
+}' > /etc/nginx/sites-available/jarkom
+
+ln -s /etc/nginx/sites-available/jarkom /etc/nginx/sites-enabled
+rm -rf /etc/nginx/sites-enabled/default
+
+service php7.0-fpm start
+service php7.0-fpm restart
+service nginx restart
+nginx -t
+```
+
+* Pada Wisanggeni Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no9.sh`
+
+```
+apt-get update && apt-get install nginx php php-fpm -y
+mkdir /var/www/jarkom
+touch /var/www/jarkom/index.php
+
+echo '<?php
+$hostname = gethostname();
+$date = date("Y-m-d H:i:s");
+$php_version = phpversion();
+$username = get_current_user();
+
+echo "Hello World! <br>";
+echo "Saya adalah: $username<br>";
+echo "Saat ini berada di: $hostname<br>";
+echo "Versi PHP yang saya gunakan: $php_version<br>";
+echo "Tanggal saat ini: $date<br>";
+?>' > /var/www/jarkom/index.php
+
+touch /etc/nginx/sites-available/jarkom
+
+echo 'server {
+	listen 8003;
+
+	root /var/www/jarkom;
+
+	index index.php index.html index.htm;
+	sever_name _;
+
+	location / {
+			try_files $uri $uri/ /index.php?$query_string;
+	}
+
+	# pass PHP scripts to FastCGI server
+	location ~ \.php$ {
+	include snippets/fastcgi-php.conf;
+	fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+	}
+
+location ~ /\.ht {
+			deny all;
+	}
+
+	error_log /var/log/nginx/jarkom_error.log
+	access_log /var/log/nginx/jarkom_access.log
+}' > /etc/nginx/sites-available/jarkom
+
+ln -s /etc/nginx/sites-available/jarkom /etc/nginx/sites-enabled
+rm -rf /etc/nginx/sites-enabled/default
+
+service php7.0-fpm start
+service php7.0-fpm restart
+service nginx restart
+nginx -t
+```
+
 ## Soal 10
 Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh
     - Prabakusuma:8001
@@ -616,11 +833,79 @@ Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan 
 ## Soal 11
 Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
 
+* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no11.sh`
+
+```
+apt-get install apache2
+apt-get install php
+apt-get install libapache2-mod-php7.0
+apt-get install wget
+apt-get install unzip
+
+mkdir /var/www/abimanyu.a08
+
+touch /etc/apache2/sites-available/abimanyu.a08.com.conf
+
+echo '<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/abimanyu.a08
+	ServerName abimanyu.a08.com
+	ServerAlias www.abimanyu.a08.com
+
+	<Directory /var/www/abimanyu.a08/>
+		Options +Indexes
+	</Directory>
+
+	Alias "/home" "/var/www/abimanyu.a08/index.php/home"
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/abimanyu.a08.com.conf
+
+a2enmod rewrite abimanyu.a08.com.conf
+a2ensite abimanyu.a08.com.conf
+service apache2 restart
+
+unzip -j /var/www/abimanyu.a08/abimanyu.zip -d /var/www/abimanyu.a08
+
+rm -rf /var/www/abimanyu.a08/abimanyu.zip 
+```
+
 ## Soal 12
 Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 
 ## Soal 13
 Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
+
+* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no13.sh`
+
+```
+mkdir /var/www/parikesit.abimanyu.a08
+
+touch /etc/apache2/sites-available/parikesit.abimanyu.a08.com.conf
+
+echo '<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/parikesit.abimanyu.a08
+	ServerName parikesit.abimanyu.a08
+	ServerAlias www.parikesit.abimanyu.a08
+
+	<Directory /var/www/parikesit.abimanyu.a08/>
+		Options +Indexes
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.a08.com.conf
+
+a2enmod rewrite parikesit.abimanyu.a08.com.conf
+a2ensite parikesit.abimanyu.a08.com.conf
+service apache2 restart
+
+unzip -j /var/www/parikesit.abimanyu.a08/abimanyu.zip -d /var/www/parikesit.abimanyu.a08
+
+rm -rf /var/www/parikesit.abimanyu.a08/parikesit_abimanyu.zip 
+```
 
 ## Soal 14
 Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
