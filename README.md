@@ -351,6 +351,7 @@ nameserver 10.3.3.2' > /etc/resolv.conf
 ping abimanyu.a08.com -c 5
 ```
 
+<img width="319" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/4fec73c3-3ce0-4e8c-b80d-705c2909373e">
 
 ## Soal 7
 Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
