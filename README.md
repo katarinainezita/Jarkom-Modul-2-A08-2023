@@ -110,7 +110,7 @@ iface eth0 inet static
 
 2. Ketikkan `iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.3.0.0/16` pada router Pandudewanata. Setelah itu ketikkan command `cat /etc/resolv.conf`
 
-3. Masukkan command `echo nameserver 192.168.122.1 > /etc/resolv.conf`pada semua node yang ada dan coba `PING google.com` untuk memastikan bahwa semua node sudah tersambung.
+3. Masukkan command `echo nameserver 192.168.122.1 > /etc/resolv.conf`pada semua node yang ada dan coba `ping google.com` untuk memastikan bahwa semua node sudah tersambung.
    
 ![image](https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/f1a87bdb-db81-44db-bf33-43cf0ccb735f)
 
