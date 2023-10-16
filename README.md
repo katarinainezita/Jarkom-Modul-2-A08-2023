@@ -302,7 +302,7 @@ apt-get install dnsutils
 host -t PTR 10.3.2.2
 ```
 
-<img width="328" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/d34f4941-2ac8-40dc-9409-e14b1fd55e23">
+<img width="254" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/e2d37c6e-8744-4597-ae4e-40674ec13765">
 
 ## Soal 6
 Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
