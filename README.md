@@ -227,6 +227,9 @@ ping abimanyu.a08.com -c 5
 ## Soal 4
 Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
 
+Untuk membuat subdomain `parikesit`, cukup menambahkan konfigurasi pada Yudhistira dan disimpan dalam file `no4.sh`
+
+
 ## Soal 5
 Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 
