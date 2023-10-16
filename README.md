@@ -356,6 +356,65 @@ ping abimanyu.a08.com -c 5
 ## Soal 7
 Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
 
+* Pada Yudhistira DNS Master ubah konfigurasi mengikuti syntax dibawah ini dan simpan file dalam `no7.sh`
+
+```
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     abimanyu.a08.com. root.abimanyu.a08.com. (
+                     2023101001         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@                       IN      NS      abimanyu.a08.com.
+@                       IN      A       10.3.3.4
+www                     IN      CNAME   abimanyu.a08.com.
+parikesit               IN      A       10.3.3.4 
+ns1                     IN      A       10.3.3.2
+baratayuda              IN      NS      ns1
+@       IN      AAAA    ::1' > /etc/bind/jarkom/abimanyu.a08.com
+```
+
+* Buka file `/etc/bind/named.conf.options` dan comment `dnssec-validation auto` serta tambahkan `allow-query{any;};` atau bisa langsung menuliskan syntax dibawah ini pada file `no7.sh`
+
+```
+echo 'options {
+	directory "/var/cache/bind";
+
+	// If there is a firewall between you and nameservers you want
+	// to talk to, you may need to fix the firewall to allow the multiple
+	// ports to talk. See http://www.kb.cert.org/vuls/id/800113
+
+	// If your ISP provided one or more IP addresses for stable
+	// nameservers, you probably want to use them as forwarders.
+	// Uncomment the following block, and insert the addresses replacing
+	// the all-0s placeholder.
+
+    	// forwarders {
+    	//      0.0.0.0;
+    	// };
+
+	//===================================================================$
+	// If BIND logs error messages about the root key being expired,
+	// you will need to update your keys. See https://www.isc.org/bind-keys
+	//===================================================================$
+    	//dnssec-validation auto;
+	allow-query{any;};
+
+    	auth-nxdomain no;    # conform to RFC1035
+    	listen-on-v6 { any; };
+};' > /etc/bind/named.conf.options
+```
+
+* Kemudian edit file  `/etc/bind/named.conf.local` seperti syntax dibawah ini :
+```
+
+```
+
 ## Soal 8
 Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
 
