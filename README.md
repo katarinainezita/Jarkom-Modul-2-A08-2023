@@ -240,10 +240,12 @@ service bind9 restart
 ```
 echo 'nameserver 10.3.2.2' > /etc/resolv.conf
 
-ping abimanyu.a08.com -c 5
+ping parikesit.abimanyu.a08.com -c 5
 ```
 
-<img width="319" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/d1039ce3-7707-42e8-a14a-26104c25f7f3">
+<img width="328" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/109232320/d34f4941-2ac8-40dc-9409-e14b1fd55e23">
+
+
 ## Soal 5
 Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 
