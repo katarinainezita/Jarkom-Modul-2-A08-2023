@@ -825,11 +825,148 @@ service nginx restart
 nginx -t
 ```
 
+- lalu tes pada salah satu client (sadewa) untuk akses ke arjuna.a08.com
+<img width="718" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/c68c2d33-82b5-4ec2-9810-4be6018ad896">
+
+
 ## Soal 10
 Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh
     - Prabakusuma:8001
     - Abimanyu:8002
     - Wisanggeni:8003
+
+- Untuk penyelesaian nomor 10 kurang lebih sama dengan nomor 9, karena pada dasarnya, nginx memiliki default algoritma Round Robin, sehingga yang perlu dilakukan hanyalah mengubah port untuk masing - masing server dan mengurutkannya di load balancer.
+- Ini adalah update untuk arjuna :
+```
+#!/bin/bash
+
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+
+apt-get update
+apt-get install bind9 nginx
+touch /etc/nginx/sites-available/lb-jarkom
+
+echo '
+upstream myweb {
+        server 10.3.3.5:8001;
+        server 10.3.3.4:8002;
+        server 10.3.3.6:8003;
+}
+
+server {
+        listen 80;
+        server_name arjuna.a08.com www.arjuna.a08.com;
+
+        location / {
+        proxy_pass http://myweb;
+        }
+}' > /etc/nginx/sites-available/lb-jarkom
+
+ln -s /etc/nginx/sites-available/lb-jarkom /etc/nginx/sites-enabled
+rm -rf /etc/nginx/sites-enabled/default
+
+service nginx restart
+
+nginx -t
+```
+
+- ini update untuk abimanyu :
+```
+echo 'server {
+
+        listen 8002;
+
+        root /var/www/jarkom;
+
+        index index.php index.html index.htm;
+        server_name _;
+
+        location / {
+                        try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        # pass PHP scripts to FastCGI server
+        location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        }
+
+location ~ /\.ht {
+                        deny all;
+        }
+
+        error_log /var/log/nginx/jarkom_error.log;
+        access_log /var/log/nginx/jarkom_access.log;
+}' > /etc/nginx/sites-available/jarkom
+```
+
+- ini update untuk prabakusuma:
+```
+echo 'server {
+
+        listen 8001;
+
+        root /var/www/jarkom;
+
+        index index.php index.html index.htm;
+        server_name _;
+
+        location / {
+                        try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        # pass PHP scripts to FastCGI server
+        location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        }
+
+location ~ /\.ht {
+                        deny all;
+        }
+
+        error_log /var/log/nginx/jarkom_error.log;
+        access_log /var/log/nginx/jarkom_access.log;
+}' > /etc/nginx/sites-available/jarkom
+```
+
+- ini update untuk wisanggeni :
+```
+echo 'server {
+
+        listen 8003;
+
+        root /var/www/jarkom;
+
+        index index.php index.html index.htm;
+        server_name _;
+
+        location / {
+                        try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        # pass PHP scripts to FastCGI server
+        location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        }
+
+location ~ /\.ht {
+                        deny all;
+        }
+
+        error_log /var/log/nginx/jarkom_error.log;
+        access_log /var/log/nginx/jarkom_access.log;
+}' > /etc/nginx/sites-available/jarkom
+```
+
+- lalu untuk tesnya, kita dapat mengaksesnya pada salah satu client, sadewa, dengan lynx arjuna.a08.com dan click ctrl + r untuk mengganti portnya:
+
+<img width="694" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/6559ba80-d248-4dd7-a4e9-d2d9cd97aae4">
+
+<img width="706" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/6b5ca4d4-176c-4be3-84f3-0a2672f59f1c">
+
+<img width="706" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/48e2e016-cde1-494e-ba26-ae9232476a5e">
 
 ## Soal 11
 Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
@@ -853,12 +990,6 @@ echo '<VirtualHost *:80>
 	ServerName abimanyu.a08.com
 	ServerAlias www.abimanyu.a08.com
 
-	<Directory /var/www/abimanyu.a08/>
-		Options +Indexes
-	</Directory>
-
-	Alias "/home" "/var/www/abimanyu.a08/index.php/home"
-
 	ErrorLog ${APACHE_LOG_DIR}/error.log
 	CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>' > /etc/apache2/sites-available/abimanyu.a08.com.conf
@@ -873,8 +1004,31 @@ unzip -j /var/www/abimanyu.a08/abimanyu.zip -d /var/www/abimanyu.a08
 rm -rf /var/www/abimanyu.a08/abimanyu.zip 
 ```
 
+- kemudian tes di client apakah abimanyu.a08.com atau www.abimanyu.a08.com sudah dapat diakses atau belum menggunakan lynx abimanyu.a08.com dan lynx www.abimanyu.a08.com. Didapatkan bahwa dua - duanya sudah menunjukkan bahwa deployment sudah berhasil
+
+<img width="709" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/0818d6d6-b1de-42b7-961a-433627f9d6d8">
+
+<img width="704" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/0f11e7cb-8b38-4537-b49e-63649b7676f8">
+
+
 ## Soal 12
 Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
+
+- untuk menyelesaikan masalah ini, kita dapat menggunakan directory alias yang sudah dijelaskan di modul. perintah ini dapat kita tambahkan di file konfigurasi abimanyu.a08
+
+```
+<Directory /var/www/abimanyu.a08/>
+		Options +Indexes
+</Directory>
+
+Alias "/home" "/var/www/abimanyu.a08/index.php/home"
+```
+
+- kemudian tes di client apakah abimanyu.a08.com/home sudah dapat diakses atau belum.
+
+<img width="706" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/3efb3866-99df-4c01-9962-169c64ddbdb3">
+
+<img width="709" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/865d78d8-cb29-4a5d-81a5-4209b9c15ae8">
 
 ## Soal 13
 Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
@@ -908,6 +1062,12 @@ unzip -j /var/www/parikesit.abimanyu.a08/abimanyu.zip -d /var/www/parikesit.abim
 
 rm -rf /var/www/parikesit.abimanyu.a08/parikesit_abimanyu.zip 
 ```
+
+- kemudian tes di client apakah parikesit.abimanyu.a08.com dapat diakses atau belum
+  
+<img width="705" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/9e89e106-9805-4001-8ffe-c5cf13f0e726">
+
+<img width="707" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/3e5ca7dc-ab47-4776-813e-d4c3c5b82d9e">
 
 ## Soal 14
 Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
@@ -950,66 +1110,136 @@ cp /var/www/parikesit.abimanyu.a08/error/403.html
 rm -rf /var/www/parikesit.abimanyu.a08/parikesit.abimanyu.yyy.com
 
 ```
+- dapat dilihat bahwa untuk directory public, command yang dituliskan adalah Option +Indexes yang mana directory tersebut dapat diakses secara bebas, namun untuk directory secret, command yang dituliskan adalah Option -Indexes yang mana directory tersebut tidak dapat diakses oleh pengguna. Namun karena di dalam starter content parikesit yang didapatkan dari resource gdrive tidak memiliki folder secret, maka kita buat terlebih dahulu foldernya dan isi dengan file sebarang.
+
+- kemudian kita dapat tes untuk akses directory public dan directory secret sebagai berikut:
+
+- directory public :
+  
+<img width="863" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/673e7b71-a0d3-4086-b68d-727fc3982448">
+
+- directory secret :
+
+<img width="867" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/d671e314-ccd0-48b3-8f21-12b015c77361">
 
 ## Soal 15
 Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden
+
+- Untuk menyelesaikan permasalahan ini adalah kita dapat menambahkan command berikut di file config parikesit.
+
+```
+ErrorDocument 403 /error/403.html
+ErrorDocument 404 /error/404.html
+```
+
+sehingga nantinya apabila ada error 403 (forbidden directory) maka akan ditampilkan file 403.html, namun apabila ada error 404 (directory not found) maka akan ditampilkan file 404.html
+
+- contoh error 403 :
+
+<img width="864" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/1d442c51-6fd4-4301-ab03-829b1fc209b5">
+
+- contoh error 404 :
+
+<img width="862" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/3df2aa8c-5a1f-4886-a31a-2d36b10aae8d">
 
 ## Soal 16
 Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi 
 www.parikesit.abimanyu.yyy.com/js
 
-Untuk menjawab soal no 15 dan 16, bisa melakukan perintah di bawah ini
-
-* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no15.sh`
+Untuk menjawab soal nomor 16, bisa melakukan perintah di bawah ini di file config prikesit
 
 ```
-echo '<VirtualHost *:80>
-	ServerAdmin webmaster@localhost
-	DocumentRoot /var/www/parikesit.abimanyu.a08
-	ServerName parikesit.abimanyu.a08.com
-	ServerAlias www.parikesit.abimanyu.a08.com
-
-	Alias "/js" "/var/www/parikesit.abimanyu.a08/public/js"
-
-	<Directory /var/www/parikesit.abimanyu.a08/public/>
-		Options +Indexes
-	</Directory>
-
-	<Directory /var/www/parikesit.abimanyu.a08/secret/>
-		Options -Indexes
-	</Directory>
-
-	<Directory /var/www/parikesit.abimanyu.a08>
-		Options +FollowSymLinks -Multiviews
-		AllowOverride All
-	</Directory>
-
-	RewriteEngine On
-	RewriteCond %{REQUEST_URI} abimanyu
-	RewriteRule ^(.+)\.(png|jpg|jpeg|webp|gif)S /abimanyu.png [L,R=301]
-
-	ErrorDocument 403 /secret/403.html
-	ErrorDocument 404 /secret/404.html
-
-	ErrorLog ${APACHE_LOG_DIR}/error.log
-	CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.a08.com.conf
-
-a2enmod rewrite parikesit.abimanyu.a08.com.conf
-a2ensite parikesit.abimanyu.a08.com.conf
-service apache2 restart
-
+Alias "/js" "/var/www/parikesit.abimanyu.a08/public/js"
 ```
+
+- kemudian tes di client apakah parikesit.abimanyu.a08.com/js dapat diakses dan mengarah langsung ke /public/js
+
+<img width="857" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/e08bd9ee-54a4-4c9e-bd9e-ea5476e022fa">
+
+<img width="861" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/b7c48072-d68e-4e99-ae36-e09be4c7a92b">
+
 
 ## Soal 17
 Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 
+- untuk menjawab soal ini, kita dapat membuat terlebih dahulu domain rjp.baratayuda.abimanyu.a08.com lalu atur port nya untuk listen ke 14000 dan 14400 di file confignya seperti berikut:
+
+```
+mkdir /var/www/rjp.baratayuda.abimanyu.a08
+
+touch /etc/apache2/sites-available/rjp.baratayuda.abimanyu.a08.com.conf
+
+echo '<VirtualHost *:14000 *:14400>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/rjp.baratayuda.abimanyu.a08
+        ServerName rjp.baratayuda.abimanyu.a08.com
+        ServerAlias www.rjp.baratayuda.abimanyu.a08.com
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/rjp.baratayuda.abimanyu.a08.com.conf
+```
+
+- kemudian jangan lupa untuk setting konfigurasi port milik apache di /etc/apache2/ports.conf untuk juga listen ke port 14000 dan 14400 seperti berikut:
+
+```
+echo '# If you just change the port or add more ports here, you will likely also
+# have to change the VirtualHost statement in
+# /etc/apache2/sites-enabled/000-default.conf
+
+Listen 80
+Listen 14000
+Listen 14400
+
+<IfModule ssl_module>
+        Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+        Listen 443
+</IfModule>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet' > /etc/apache2/ports.conf
+```
+
+- jangan lupa untuk download resource untuk rjp.baratayuda.abimanyu di gdrive dengan syntax yang sama seperti sebelumnya. kemudian enable site dan restart service apache nya seperti berikut:
+
+```
+wget 'https://drive.usercontent.google.com/download?id=1pPSP7yIR05JhSFG67RVzgkb-VcW9vQO6&export=download&authuser=0&confirm=t&uuid=c039943d-843b-47b9-8910-4b46edf58596&at=APZUnTWSNiEJdlQx1mlaCEI-F6-B:169695756$unzip /var/www/rjp.baratayuda.abimanyu.a08/rjp_baratayuda_abimanyu.zip -d /var/www/rjp.baratayuda.abimanyu.a08
+
+rm -rf /var/www/rjp.baratayuda.abimanyu.a08/rjp_baratayuda_abimanyu.zip
+
+a2ensite rjp.baratayuda.abimanyu.a08.com.conf
+service apache2 restart
+```
+
+- yang terakhir tes di client apakah bisa diakses atau tidak untuk domain rjp.baratayuda.abimanyu.a08.com
+
+<img width="864" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/4e253632-918f-44e6-98a9-1f0719eacfb7">
+
+namun karena confignya juga sudah kami setting untuk bisa menyelesaikan nomor 19 (redirect ke www.abimanyu.a08.com) maka yang tampil adalah tampilan index www.abimanyu.a08.com
+
 ## Soal 18
 Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
-Untuk menjawab soal 17 dan 18 kita bisa melakukan hal di bawah ini
+- untuk menyelesaikan soal nomor 18, kita dapat menambahkan command berikut ini untuk memberikan authentifikasi pada saat mengkases rjp.abimnanyu.a08.com di file config rjp.baratayuda.abimanyu.a08
 
-* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no17.sh`
+```
+<Directory /var/www/rjp.baratayuda.abimanyu.a08>
+		AuthType Basic
+		AuthName "Restricted Content"
+		AuthUserFile /etc/apache2/.htpasswd
+		Require valid-user 
+</Directory>
+```
+
+- lalu tambahkan juga line ini untuk membuat sebuah username dan password yang harus dimasukkan saat akan mengakses rjp.baratayuda
+
+```
+htpasswd -c -b /etc/apache2/.htpasswd Wayang baratayudaa08
+```
+
+Sehingga untuk menjawab soal 17 dan 18 kita bisa menuliskan perintah dibawah ini dan simpan dalam file bernama `no17.sh`
 
 ```
 mkdir /var/www/rjp.baratayuda.abimanyu.a08
@@ -1064,6 +1294,14 @@ rm -rf /var/www/rjp.baratayuda.abimanyu.a08/rjp_baratayuda_abimanyu.zip
 
 ```
 
+- lalu tes di client apakah authentifikasi yang kita terapkan sudah masuk atau belum
+
+<img width="866" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/e4db30f3-13da-4604-8208-6c04fcc6f9c7">
+
+<img width="863" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/7aa1fddd-8006-4b6d-b35e-16f20396af1e">
+
+<img width="868" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/2f3deac3-79fc-4639-883c-37beacc5f99f">
+
 ## Soal 19
 Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
@@ -1083,5 +1321,35 @@ echo '<VirtualHost *:80>
 service apache2 restart
 ```
 
+- lalu tes di client apakah akan ke redirect apabila kita mengakses ip abimanyu
+
+<img width="704" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/781ad20c-69f8-45f6-a25e-fee185c8b7c4">
+
+<img width="864" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/e1a47ee5-58cc-447d-becf-96564351068f">
+
 ## Soal 20
 Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
+
+- untuk menyelesaikan soal ini, kita hanya perlu me-rewrite modul dari parikesit untuk me-redirect user ke abimanyu.png apabila user request gambar dengan kata abimanyu menggunakan module rewrite di file config parikesit seperti berikut:
+
+```
+<Directory /var/www/parikesit.abimanyu.a08>
+		Options +FollowSymLinks -Multiviews
+		AllowOverride All
+</Directory>
+
+RewriteEngine On
+RewriteCond %{REQUEST_URI} abimanyu
+RewriteCond %{REQUEST_URI} !^/public/images/abimanyu\.png
+RewriteRule ^(.+)\.(png|jpg|jpeg|webp|gif)$ /abimanyu.png [L,R=301]
+```
+
+- kemudian jangan lupa untuk menambahkan command berikut untuk dapat mengaplikasikan hasil rewrite modul yang telah kita tambahkan :
+
+```
+a2enmod rewrite parikesit.abimanyu.a08.com.conf
+```
+
+- lalu tes di client apakah modul rewrite kita sudah berjalan atau belum
+
+<img width="866" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/14feb060-88df-4a13-ae79-c034c09eb0e1">
