@@ -602,6 +602,7 @@ www.rjp		IN	CNAME	rjp.baratayuda.abimanyu.a08.com
 ```
 service bind9 restart
 ```
+<img width="718" alt="image" src="https://github.com/katarinainezita/Jarkom-Modul-2-A08-2023/assets/105977864/64f0154d-2b6e-4514-8c64-1b68bc9e57e6">
 
 
 ## Soal 9
