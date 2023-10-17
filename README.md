@@ -866,6 +866,7 @@ a2enmod rewrite abimanyu.a08.com.conf
 a2ensite abimanyu.a08.com.conf
 service apache2 restart
 
+wget 'https://drive.usercontent.google.com/download?id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc&export=download&authuser=0&confirm=t&uuid=ba803a01-09da-443a-aca9-f9af1f05407a&at=APZUnTW3k1liYo8m6AXA1QNDCNX1:1696931215102'
 unzip -j /var/www/abimanyu.a08/abimanyu.zip -d /var/www/abimanyu.a08
 
 rm -rf /var/www/abimanyu.a08/abimanyu.zip 
@@ -910,6 +911,45 @@ rm -rf /var/www/parikesit.abimanyu.a08/parikesit_abimanyu.zip
 ## Soal 14
 Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 
+* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no14.sh`
+
+```
+echo '<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/parikesit.abimanyu.a08
+	ServerName parikesit.abimanyu.a08.com
+	ServerAlias www.parikesit.abimanyu.a08.com
+
+	<Directory /var/www/parikesit.abimanyu.a08/public/>
+		Options +Indexes
+	</Directory>
+
+	<Directory /var/www/parikesit.abimanyu.a08/secret/>
+		Options -Indexes
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.a08.com.conf
+
+a2enmod rewrite parikesit.abimanyu.a08.com.conf
+a2ensite parikesit.abimanyu.a08.com.conf
+service apache2 restart
+
+rm -rf /var/www/parikesit.abimanyu.a08
+mkdir var/www/parikesit.abimanyu.a08
+wget 'https://drive.usercontent.google.com/download?id=1LdbYntiYVF_NVNgJis1GLCLPEGyIOreS&export=download&authuser=0&confirm=t&uuid=7440274a-d695-44db-8cd9-70df5bbf7c96&at=APZUnTWw6S5Rd4s_a6CHfvUKTqQG:1696947964978'
+unzip -j /var/www/parikesit.abimanyu.a08/parikesit_abimanyu.zip -d /var/www/parikesit.abimanyu.a08
+rm -rf /var/www/parikesit.abimanyu.a08/parikesit_abimanyu.zip
+
+mv /var/www/parikesit.abimanyu.a08/parikesit.abimanyu.yyy.com/public
+mv /var/www/parikesit.abimanyu.a08/parikesit.abimanyu.yyy.com/error
+mkdir /var/www/parikesit.abimanyu.a08/secret
+cp /var/www/parikesit.abimanyu.a08/error/403.html
+rm -rf /var/www/parikesit.abimanyu.a08/parikesit.abimanyu.yyy.com
+
+```
+
 ## Soal 15
 Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden
 
@@ -917,14 +957,130 @@ Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode 
 Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi 
 www.parikesit.abimanyu.yyy.com/js
 
+Untuk menjawab soal no 15 dan 16, bisa melakukan perintah di bawah ini
+
+* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no15.sh`
+
+```
+echo '<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/parikesit.abimanyu.a08
+	ServerName parikesit.abimanyu.a08.com
+	ServerAlias www.parikesit.abimanyu.a08.com
+
+	Alias "/js" "/var/www/parikesit.abimanyu.a08/public/js"
+
+	<Directory /var/www/parikesit.abimanyu.a08/public/>
+		Options +Indexes
+	</Directory>
+
+	<Directory /var/www/parikesit.abimanyu.a08/secret/>
+		Options -Indexes
+	</Directory>
+
+	<Directory /var/www/parikesit.abimanyu.a08>
+		Options +FollowSymLinks -Multiviews
+		AllowOverride All
+	</Directory>
+
+	RewriteEngine On
+	RewriteCond %{REQUEST_URI} abimanyu
+	RewriteRule ^(.+)\.(png|jpg|jpeg|webp|gif)S /abimanyu.png [L,R=301]
+
+	ErrorDocument 403 /secret/403.html
+	ErrorDocument 404 /secret/404.html
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/parikesit.abimanyu.a08.com.conf
+
+a2enmod rewrite parikesit.abimanyu.a08.com.conf
+a2ensite parikesit.abimanyu.a08.com.conf
+service apache2 restart
+
+```
+
 ## Soal 17
 Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 
 ## Soal 18
 Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
+Untuk menjawab soal 17 dan 18 kita bisa melakukan hal di bawah ini
+
+* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no17.sh`
+
+```
+mkdir /var/www/rjp.baratayuda.abimanyu.a08
+
+touch /etc/apache2/sites-available/rjp.baratayuda.abimanyu.a08.com.conf
+
+echo '<VirtualHost *:14000 *:14400>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/rjp.baratayuda.abimanyu.a08
+	ServerName rjp.baratayuda.abimanyu.a08.com
+	ServerAlias www.rjp.baratayuda.abimanyu.a08.com
+
+	<Directory /var/www/rjp.baratayuda.abimanyu.a08>
+		AuthType Basic
+		AuthName "Restricted Content"
+		AuthUserFile /etc/apache2/.htpasswd
+		Require valid-user 
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/rjp.baratayuda.abimanyu.a08.com.conf
+
+htpasswd -c -b /etc/apache2/.htpasswd Wayang baratayudaa08
+
+a2enmod rewrite rjp.baratayuda.abimanyu.a08.com.conf
+a2ensite rjp.baratayuda.abimanyu.a08.com.conf
+service apache2 restart
+
+echo '# If you just change the port or add more ports here, you will likely also
+# have to change the VirtualHost statement in
+# /etc/apache2/sites-enabled/000-default.conf
+
+Listen 80
+Listen 14000
+Listen 14400
+
+<IfModule ssl_module>
+	Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+	Listen 443
+</IfModule>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet' > /etc/apache2/ports.conf
+
+wget 'https://drive.usercontent.google.com/download?id=1pPSP7yIR05JhSFG67RVzgkb-VcW9vQO6&export=download&authuser=0&confirm=t&uuid=c039943d-843b-47b9-8910-4b46edf58596&at=APZUnTWSNiEJdlQx1mlaCEI-F6-B:1696957565777'
+unzip -j /var/www/rjp.baratayuda.abimanyu.a08/rjp_baratayuda_abimanyu.zip -d /var/www/rjp.baratayuda.abimanyu.a08
+
+rm -rf /var/www/rjp.baratayuda.abimanyu.a08/rjp_baratayuda_abimanyu.zip
+
+```
+
 ## Soal 19
 Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
+
+* Pada Abimanyu Web Server, ketikkan syntax dibawah ini dan simpan dalam file bernama `no19.sh`
+
+```
+echo '<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/html
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	Redirect / http://www.abimanyu.a08.com/
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+service apache2 restart
+```
 
 ## Soal 20
 Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
